@@ -1,0 +1,93 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "cpspot"
+version = "0.1.0"
+description = "Extract title and artist from a Spotify song url"
+authors = ["bytinbit"]
+packages = [
+	{ include = "src" },
+	{ include = "src/**/*.py" },
+]
+
+[tool.poetry.scripts]
+cpspot = "src.cli:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+click = "^8.0.3"
+requests = "^2.26.0"
+beautifulsoup4 = "^4.10.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+black = "^21.11b1"
+flake8 = "^4.0.1"
+mypy = "^0.910"
+tox = "^3.24.4"
+
+[tool.mypy]
+python_version = 3.8
+
+### --strict
+warn_unused_configs = true
+disallow_any_generics = true
+disallow_subclassing_any = true
+# disallow_untyped_calls = true
+# disallow_untyped_defs = true  
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+# no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+# warn_return_any = true
+# no_implicit_reexport = true
+# strict_equality = true
+
+### Other strictness flags
+warn_unreachable = true
+disallow_any_unimported = true
+
+### Output
+show_error_codes = true
+show_error_context = true
+pretty = true
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+isolated_build = True
+envlist = py,black,mypy,linting
+testpaths = "tests"
+
+[testenv]
+description = Run pytest
+deps = 
+    pytest
+    pytest-cov
+commands = pytest {posargs}
+
+[testenv:black]
+description = Check formatting with black
+skip_install = true
+deps = 
+    black
+commands = black --check src tests
+
+[testenv:mypy]
+description = Check typing with mypy
+deps = 
+   mypy
+   click
+   pytest
+passenv = TERM
+commands = mypy {posargs} src tests
+
+[testenv:linting]
+description = Run flake8 for linting
+deps = flake8
+commands = flake8 --max-line-length 88 src tests {posargs}
+"""
