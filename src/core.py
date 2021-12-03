@@ -1,4 +1,5 @@
 import logging
+from typing import Tuple
 
 import requests
 from bs4 import BeautifulSoup
@@ -19,7 +20,7 @@ def extract(raw_response: str) -> str:
     return raw_string
 
 
-def transform(data: str) -> (str, str):
+def transform(data: str) -> Tuple[str, str]:
     """Parse a string that contains title and artist to a song
 
     :param data: string containing title and artist
@@ -30,7 +31,13 @@ def transform(data: str) -> (str, str):
     return parsed[0], parsed[2]
 
 
-def get_data(url: str):
+def get_data(url: str) -> Tuple[str, str]:
+    """
+    Retrieve title and artist from the URL that displays information about a song
+     on Spotify
+    :param url: url to the song
+    :return: title and artist
+    """
     # error handling following:
     # https://stackoverflow.com/questions/16511337/correct-way-to-try-except-using-python-requests-module
     unparsed = ""
@@ -40,7 +47,7 @@ def get_data(url: str):
         response.raise_for_status()
         unparsed = response.content.decode("utf-8")
     except requests.exceptions.HTTPError as error:
-        SystemExit(error)
+        raise SystemExit(error)
     except requests.exceptions.RequestException as error:
         raise SystemExit(error)
 
