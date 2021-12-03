@@ -27,8 +27,9 @@ def transform(data: str) -> Tuple[str, str]:
     :return: title and artist
     """
     # expected format: 恭喜恭喜 - song by 姚莉, 姚敏 | Spotify
-    parsed = data.replace("by", "-").replace("|", "-").split(" - ")
-    return parsed[0], parsed[2]
+    title, rest = data.split("- song by ")
+    artist = rest.split(" | Spotify")[0]
+    return title, artist
 
 
 def get_data(url: str) -> Tuple[str, str]:
