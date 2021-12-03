@@ -1,35 +1,40 @@
+import json
 import logging
-from typing import Tuple
+import sys
+from typing import Tuple, Optional, Any, Dict
 
 import requests
 from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
+URL = "https://open.spotify.com/track/5lQdYxYl9okxBXtnSN8iJI?si=0e7aa3db079c42c5&nd=1"
 
-def extract(raw_response: str) -> str:
-    """Extract the relevant string from a HTML page that displays information
+def extract(raw_response: str) -> Optional[Dict[str, Any]]:
+    """Extract the relevant data from a HTML page that contains information
     about a Spotify song
 
     :param raw_response: complete content of a html page as a string
-    :return: unprocessed string that contains title and artist
+    :return: JSON data  that contains title and artist
     """
     tree = BeautifulSoup(raw_response, "html.parser")
-    raw_string = tree.head.title.text
-    logging.info(f"Found raw song title: {raw_string}")
-    return raw_string
+    script_tag = tree.find_all("script")
+    for tag in script_tag:
+        if "Spotify.Entity" in tag.text:
+            jsonentity = tag.text.split("Spotify.Entity = ")[1]
+            return json.loads(jsonentity.strip()[:-1])
+    return None
 
 
-def transform(data: str) -> Tuple[str, str]:
-    """Parse a string that contains title and artist to a song
+def transform(data: Dict[str, Any]) -> Tuple[str, str]:
+    """Extract title and artists from parsed JSON data.
 
     :param data: string containing title and artist
     :return: title and artist
     """
-    # expected format: 恭喜恭喜 - song by 姚莉, 姚敏 | Spotify
-    title, rest = data.split("- song by ")
-    artist = rest.split(" | Spotify")[0]
-    return title, artist
+    artists = ", ".join([artist["name"] for artist in data["artists"]])
+    title = data["name"]
+    return title, artists
 
 
 def get_data(url: str) -> Tuple[str, str]:
@@ -53,4 +58,9 @@ def get_data(url: str) -> Tuple[str, str]:
         raise SystemExit(error)
 
     raw = extract(unparsed)
+    if not raw:
+        # Fixme niceify error-handling
+        logger.info("Could not find relevant information on website content")
+        sys.exit(1)
+
     return transform(raw)
