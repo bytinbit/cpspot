@@ -19,3 +19,6 @@ Title:
 Artist:
 姚莉, 姚敏
 ```
+
+## Escaping URLs in zsh
+Zsh auto-escapes certain characters in the URL - a solution can be found in [[Tip] Better URL pasting in ZSH](https://forum.endeavouros.com/t/tip-better-url-pasting-in-zsh/6962).
