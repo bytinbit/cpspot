@@ -22,6 +22,7 @@ def extract(raw_response: str) -> Optional[Dict[str, Any]]:
     for tag in script_tag:
         if "Spotify.Entity" in tag.text:
             jsonentity = tag.text.split("Spotify.Entity = ")[1]
+            # [:-1] data ends with a semicolon which must be removed for valid JSON
             return json.loads(jsonentity.strip()[:-1])
     return None
 
@@ -44,9 +45,8 @@ def get_data(url: str) -> Tuple[str, str]:
     :param url: url to the song
     :return: title and artist
     """
-    # error handling following:
+    # requests error handling follows:
     # https://stackoverflow.com/questions/16511337/correct-way-to-try-except-using-python-requests-module
-    unparsed = ""
 
     try:
         response = requests.get(url=url)
