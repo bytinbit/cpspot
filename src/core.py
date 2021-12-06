@@ -1,14 +1,26 @@
 import json
 import logging
-import sys
 from typing import Tuple, Optional, Any, Dict
 
 import requests
 from bs4 import BeautifulSoup
 
+from src.errors import FetchDataError
+
 logger = logging.getLogger(__name__)
 
-URL = "https://open.spotify.com/track/5lQdYxYl9okxBXtnSN8iJI?si=0e7aa3db079c42c5&nd=1"
+
+def transform(data: Dict[str, Any]) -> Tuple[str, str]:
+    """Extract title and artists from parsed JSON data.
+
+    :param data: string containing title and artist
+    :return: title and artist
+    """
+    logger.info("Getting title and artist(s)...")
+    artists = ", ".join([artist["name"] for artist in data["artists"]])
+    title = data["name"]
+    return title, artists
+
 
 def extract(raw_response: str) -> Optional[Dict[str, Any]]:
     """Extract the relevant data from a HTML page that contains information
@@ -17,6 +29,7 @@ def extract(raw_response: str) -> Optional[Dict[str, Any]]:
     :param raw_response: complete content of a html page as a string
     :return: JSON data  that contains title and artist
     """
+    logger.info("Parsing raw HTML...")
     tree = BeautifulSoup(raw_response, "html.parser")
     script_tag = tree.find_all("script")
     for tag in script_tag:
@@ -27,18 +40,7 @@ def extract(raw_response: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-def transform(data: Dict[str, Any]) -> Tuple[str, str]:
-    """Extract title and artists from parsed JSON data.
-
-    :param data: string containing title and artist
-    :return: title and artist
-    """
-    artists = ", ".join([artist["name"] for artist in data["artists"]])
-    title = data["name"]
-    return title, artists
-
-
-def get_data(url: str) -> Tuple[str, str]:
+def get_data(url: str) -> Dict[str, Any]:
     """
     Retrieve title and artist from the URL that displays information about a song
      on Spotify
@@ -53,14 +55,10 @@ def get_data(url: str) -> Tuple[str, str]:
         response.raise_for_status()
         unparsed = response.content.decode("utf-8")
     except requests.exceptions.HTTPError as error:
-        raise SystemExit(error)
+        raise FetchDataError(
+            f"A HTTP error occurred while fetching song data:\n{error}"
+        )
     except requests.exceptions.RequestException as error:
-        raise SystemExit(error)
+        raise FetchDataError(f"An error occurred while fetching song data:\n{error}")
 
-    raw = extract(unparsed)
-    if not raw:
-        # Fixme niceify error-handling
-        logger.info("Could not find relevant information on website content")
-        sys.exit(1)
-
-    return transform(raw)
+    return extract(unparsed)
