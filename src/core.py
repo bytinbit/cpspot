@@ -4,6 +4,8 @@ from typing import Tuple
 import requests
 from bs4 import BeautifulSoup
 
+from src.errors import DataNetworkError
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,9 +50,9 @@ def get_data(url: str) -> Tuple[str, str]:
         response.raise_for_status()
         unparsed = response.content.decode("utf-8")
     except requests.exceptions.HTTPError as error:
-        raise SystemExit(error)
+        raise DataNetworkError(f"A HTTP error occurred while fetching song data:\n{error}")
     except requests.exceptions.RequestException as error:
-        raise SystemExit(error)
+        raise DataNetworkError(f"An error occurred while fetching song data:\n{error}")
 
     raw = extract(unparsed)
     return transform(raw)
