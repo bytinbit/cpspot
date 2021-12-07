@@ -40,7 +40,7 @@ def extract_spotify_entity(raw_response: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-def retrieve_song_data(url: str) -> Dict[str, Any]:
+def get_song_data(url: str) -> Dict[str, Any]:
     """
     Retrieve the relevant data from the URL that displays information about a song
      on Spotify
