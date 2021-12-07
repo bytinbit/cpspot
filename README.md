@@ -25,7 +25,10 @@ Parsing raw HTML...
 Getting title and artist(s) information...
 Original Bedroom Rockers - Kruder & Dorfmeister
 Cowgirl - Remastered - Underworld
-# -- snip --
+Voodoo People - The Prodigy
+Open Up (Full Vocal Mix) - Leftfield
+Halcyon and On and On - Orbital
+# -- output shortened for brevity --
 ```
 
 ## Escaping URLs in zsh
