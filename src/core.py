@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Tuple, Optional, Any, Dict
+from typing import Tuple, Optional, Any, Dict, List
 
 import requests
 from bs4 import BeautifulSoup
@@ -10,16 +10,28 @@ from src.errors import FetchDataError, ParseError
 logger = logging.getLogger(__name__)
 
 
-def transform(data: Dict[str, Any]) -> Tuple[str, str]:
+def transform(data: Dict[str, Any], playlist: bool = False) -> List[Tuple[str, str]]:
     """Extract title and artists from parsed JSON data.
 
     :param data: string containing title and artist
+    :param playlist: if True, raw data is a playlist containing several songs
     :return: title and artist
     """
-    logger.info("Getting title and artist(s)...")
-    artists = ", ".join([artist["name"] for artist in data["artists"]])
-    title = data["name"]
-    return title, artists
+    results = []
+    logger.info("Getting title and artist(s) information...")
+    if playlist:
+        tracks = data["tracks"]["items"]
+        for track in tracks:
+            title = track["track"]["name"]
+            artists = ", ".join(
+                [artist["name"] for artist in track["track"]["artists"]]
+            )
+            results.append((title, artists))
+    else:
+        artists = ", ".join([artist["name"] for artist in data["artists"]])
+        title = data["name"]
+        results.append((title, artists))
+    return results
 
 
 def extract_spotify_entity(raw_response: str) -> Optional[Dict[str, Any]]:

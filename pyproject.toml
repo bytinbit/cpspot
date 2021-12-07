@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "cpspot"
-version = "0.1.0"
+version = "1.0.0"
 description = "Extract title and artist from a Spotify song url"
 authors = ["bytinbit"]
 packages = [
