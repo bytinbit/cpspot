@@ -5,7 +5,7 @@ from typing import Tuple, Optional, Any, Dict
 import requests
 from bs4 import BeautifulSoup
 
-from src.errors import FetchDataError
+from src.errors import FetchDataError, ParseError
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +22,9 @@ def transform(data: Dict[str, Any]) -> Tuple[str, str]:
     return title, artists
 
 
-def extract(raw_response: str) -> Optional[Dict[str, Any]]:
-    """Extract the relevant data from a HTML page that contains information
-    about a Spotify song
+def extract_spotify_entity(raw_response: str) -> Optional[Dict[str, Any]]:
+    """Find the Spotify.Entity in a HTML page that contains structured information
+     about a Spotify song.
 
     :param raw_response: complete content of a html page as a string
     :return: JSON data  that contains title and artist
@@ -40,9 +40,9 @@ def extract(raw_response: str) -> Optional[Dict[str, Any]]:
     return None
 
 
-def get_data(url: str) -> Dict[str, Any]:
+def get_song_data(url: str) -> Dict[str, Any]:
     """
-    Retrieve title and artist from the URL that displays information about a song
+    Retrieve the relevant data from the URL that displays information about a song
      on Spotify
     :param url: url to the song
     :return: title and artist
@@ -53,7 +53,7 @@ def get_data(url: str) -> Dict[str, Any]:
     try:
         response = requests.get(url=url)
         response.raise_for_status()
-        unparsed = response.content.decode("utf-8")
+        unparsed = response.text
     except requests.exceptions.HTTPError as error:
         raise FetchDataError(
             f"A HTTP error occurred while fetching song data:\n{error}"
@@ -61,4 +61,7 @@ def get_data(url: str) -> Dict[str, Any]:
     except requests.exceptions.RequestException as error:
         raise FetchDataError(f"An error occurred while fetching song data:\n{error}")
 
-    return extract(unparsed)
+    raw = extract_spotify_entity(unparsed)
+    if not raw:
+        raise ParseError("Cannot extract data: Could not find song information!")
+    return raw
