@@ -15,15 +15,15 @@ logging.basicConfig(
 
 
 @click.command()
+@click.option("-p", "--playlist", is_flag=True)
 @click.argument("url", metavar="URL")
-def main(url):
+def main(url, playlist):
     try:
         raw = get_song_data(url)
     except Error as e:
         print(e)
         sys.exit(1)
 
-    title, artist = transform(raw)
-    print("Here's your title and artist:")
-    print(f"{title}")
-    print(f"{artist}")
+    results = transform(raw, playlist)
+    for song in results:
+        print(f"{song[0]} - {song[1]}")
