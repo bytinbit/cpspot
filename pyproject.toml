@@ -29,34 +29,6 @@ mypy = "^0.910"
 tox = "^3.24.4"
 responses = "^0.16.0"
 
-[tool.mypy]
-python_version = 3.8
-
-### --strict
-warn_unused_configs = true
-disallow_any_generics = true
-disallow_subclassing_any = true
-# disallow_untyped_calls = true
-# disallow_untyped_defs = true  
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-# no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-# warn_return_any = true
-# no_implicit_reexport = true
-# strict_equality = true
-
-### Other strictness flags
-warn_unreachable = true
-disallow_any_unimported = true
-
-### Output
-show_error_codes = true
-show_error_context = true
-pretty = true
-
 [tool.tox]
 legacy_tox_ini = """
 [tox]
@@ -69,6 +41,7 @@ description = Run pytest
 deps = 
     pytest
     pytest-cov
+    responses
 commands = pytest {posargs}
 
 [testenv:black]
