@@ -30,17 +30,17 @@ RAW_DATA = {
         "images": [
             {
                 "height": 640,
-                "url": "https://i.scdn.co/image/ab67616d0000b273a174ee78ebf4fcdad5b64444",
+                "url": "https://i.scdn.co/image/ab67616d0000b273a174ee78ebf4fcdad5b64444",  # noqa E501
                 "width": 640,
             },
             {
                 "height": 300,
-                "url": "https://i.scdn.co/image/ab67616d00001e02a174ee78ebf4fcdad5b64444",
+                "url": "https://i.scdn.co/image/ab67616d00001e02a174ee78ebf4fcdad5b64444",  # noqa E501
                 "width": 300,
             },
             {
                 "height": 64,
-                "url": "https://i.scdn.co/image/ab67616d00004851a174ee78ebf4fcdad5b64444",
+                "url": "https://i.scdn.co/image/ab67616d00004851a174ee78ebf4fcdad5b64444",  # noqa E501
                 "width": 64,
             },
         ],
@@ -86,15 +86,17 @@ RAW_DATA = {
     "is_playable": True,
     "name": "恭喜恭喜",
     "popularity": 19,
-    "preview_url": "https://p.scdn.co/mp3-preview/9c5064dcf97c902db616cef3365b0d76eaa39de7?cid=162b7dc01f3a4a2ca32ed3cec83d1e02",
+    "preview_url": "https://p.scdn.co/mp3-preview/9c5064dcf97c902db616cef3365b0d76eaa39de7?cid=162b7dc01f3a4a2ca32ed3cec83d1e02",  # noqa E501
     "track_number": 12,
     "type": "track",
     "uri": "spotify:track:5lQdYxYl9okxBXtnSN8iJI",
 }
 
-TEST_URL = "https://open.spotify.com/track/5lQdYxYl9okxBXtnSN8iJI?si=0e7aa3db079c42c5&nd=1"
+TEST_URL = (
+    "https://open.spotify.com/track/5lQdYxYl9okxBXtnSN8iJI?si=0e7aa3db079c42c5&nd=1"
+)
 
-TESTDATA_ROOT = pathlib.Path("testdata")
+TESTDATA_ROOT = pathlib.Path(__file__).parent / "testdata"
 SPOTIFY_200 = TESTDATA_ROOT / "spotify.html"
 SPOTIFY_404 = TESTDATA_ROOT / "spotify_404.html"
 SPOTIFY_NOENTITY = TESTDATA_ROOT / "spotify_noentity.html"
@@ -124,9 +126,7 @@ def test_get_song_data(mocked_responses, url, path, status):
         ("http://spotify.com/nospotifyentity", SPOTIFY_NOENTITY, 200, ParseError),
     ],
 )
-def test_get_song_data_fails(
-    mocked_responses, url, path, status, expected_exception
-):
+def test_get_song_data_fails(mocked_responses, url, path, status, expected_exception):
     mocked_responses.add(
         responses.GET, url, body=path.read_text(encoding="utf-8"), status=status
     )
