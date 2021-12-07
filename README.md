@@ -13,11 +13,19 @@ $ cd cpspot
 $ pip install .
 # Copy song url from a song's share button
 cpspot "https://open.spotify.com/track/5lQdYxYl9okxBXtnSN8iJI?si=0e7aa3db079c42c5&nd=1"    
-Received raw song title: 恭喜恭喜 - song by 姚莉, 姚敏 | Spotify
-Title:
-恭喜恭喜
-Artist:
-姚莉, 姚敏
+Parsing raw HTML...
+Getting title and artist(s) information...
+恭喜恭喜 - 姚莉, 姚敏
+```
+
+Extract all song data from a playlist:
+```bash
+cpspot "https://open.spotify.com/playlist/4VD06iQuXulKarrsIHia40?si=4ae3a105593e4919" -p
+Parsing raw HTML...
+Getting title and artist(s) information...
+Original Bedroom Rockers - Kruder & Dorfmeister
+Cowgirl - Remastered - Underworld
+# -- snip --
 ```
 
 ## Escaping URLs in zsh
