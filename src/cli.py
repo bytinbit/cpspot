@@ -3,7 +3,7 @@ import sys
 
 import click
 
-from src.core import get_data, transform
+from src.core import retrieve_song_data, transform
 from src.errors import FetchDataError, ParseError
 
 logger = logging.getLogger(__name__)
@@ -18,11 +18,7 @@ logging.basicConfig(
 @click.argument("url", metavar="URL")
 def main(url):
     try:
-        raw = get_data(url)
-        if not raw:
-            raise ParseError(
-                "Cannot extract data: Could not find relevant information!"
-            )
+        raw = retrieve_song_data(url)
     except FetchDataError as e:
         print(e)
         sys.exit(1)
