@@ -26,4 +26,5 @@ def main(url, playlist):
 
     results = transform(raw, playlist)
     for song in results:
-        print(f"{song[0]} - {song[1]}")
+        print(f"{song[0]} *********** {song[1]}")
+        print("----------------------------")
